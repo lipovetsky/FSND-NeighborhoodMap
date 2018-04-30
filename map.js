@@ -37,25 +37,39 @@ function makeMarkers() {
   var geocoder = new google.maps.Geocoder();
   for (i = 0; i < addresses.length; i++) {
     var theTitle = addresses[i].title;
+    var infowindow = new google.maps.InfoWindow;
     geocoder.geocode( {'address' : addresses[i].location}, function(results, status) {
-      if (status == 'OK') {
-        map.setCenter(results[0].geometry.location);
-        var marker = new google.maps.Marker({
-          map: map,
-          position: results[0].geometry.location
-        });
-        markers.push(marker);
-        addMessagetoMarker(marker, theTitle)
-      } else {
-        alert('Geocode failed due to: ' + status);
+        if (status == 'OK') {
+          map.setCenter(results[0].geometry.location);
+          var marker = new google.maps.Marker({
+            map: map,
+            position: results[0].geometry.location
+          });
+          markers.push(marker);
+        } else {
+          alert('Geocode failed due to: ' + status);
+        }
+      });
+      console.log(theTitle);
+      // markers.addListener('click', function() {
+      //   markers.setAnimation(google.maps.Animation.BOUNCE);
+      //   setTimeout(function () {
+      //     marker.setAnimation(null);
+      //   }, 1400);
+      //     infowindow.setOptions( {
+      //       content: theTitle
+      //     });
+      //     infowindow.open(map, marker);
+      //   });
+      // addMessagetoMarker(marker, theTitle)
       }
-    });
-  }
+  console.log(markers);
 }
 
 function addMessagetoMarker(marker, message) {
-  console.log(markers);
-  var infowindow = new google.maps.InfoWindow;
+  // for (i = 0; i < markers.length; i++) {
+  //   console.log(markers[i]);
+  // }
   marker.addListener('click', function() {
     marker.setAnimation(google.maps.Animation.BOUNCE);
     setTimeout(function () {
@@ -92,3 +106,4 @@ function addMessagetoMarker(marker, message) {
 // For setting up a responsive google map (solution written by SandroMarques)
 // 2. https://stackoverflow.com/questions/7339200/bounce-a-pin-in-google-maps-once
 // For animating a google marker.
+// 3. Google Maps API docs!
