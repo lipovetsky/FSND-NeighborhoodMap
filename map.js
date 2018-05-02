@@ -1,23 +1,25 @@
 var map;
-var markers = []
 var map_center;
 var path_bounds;
 var theTitle;
 
+var model = {
+    addresses: [
+    {title: 'Jordan Schnitzer Museum of Art', location: '1430 Johnson Lane, Eugene, OR 97403'},
+    {title: 'University of Oregon', location: '1585 E 13th Ave, Eugene, OR 97403'},
+    {title: 'Gutenberg College', location: '1883 University St, Eugene, OR 97403'},
+    {title: 'Voodoo Doughnut', location: '20 E Broadway, Eugene, OR 97401'},
+    {title: 'The Jazz Station', location: '124 W Broadway, Eugene, OR 97401'},
+    {title: 'Cowfish Dance Club & Cafe', location: '62 W Broadway, Eugene, OR 97401'},
+    {title: 'Eugene Public Library', location: '100 W 10th Ave, Eugene, OR 97401'},
+    {title: 'Cheba Hut', location: '339 E. 11th Ave., Eugene, OR 97401'},
+    {title: 'McDonald Theater', location: '1010 Willamette St, Eugene, OR 97401'},
+    {title: 'Level Up Arcade', location: '1290 Oak St, Eugene, OR 97401'},
+    {title: 'Empire Buffet', location: '1933 Franklin Blvd, Eugene, OR 97403'}
+  ],
+  markers: []
+}
 
-var addresses = [
-  {title: 'Jordan Schnitzer Museum of Art', location: '1430 Johnson Lane, Eugene, OR 97403'},
-  {title: 'University of Oregon', location: '1585 E 13th Ave, Eugene, OR 97403'},
-  {title: 'Gutenberg College', location: '1883 University St, Eugene, OR 97403'},
-  {title: 'Voodoo Doughnut', location: '20 E Broadway, Eugene, OR 97401'},
-  {title: 'The Jazz Station', location: '124 W Broadway, Eugene, OR 97401'},
-  {title: 'Cowfish Dance Club & Cafe', location: '62 W Broadway, Eugene, OR 97401'},
-  {title: 'Eugene Public Library', location: '100 W 10th Ave, Eugene, OR 97401'},
-  {title: 'Cheba Hut', location: '339 E. 11th Ave., Eugene, OR 97401'},
-  {title: 'McDonald Theater', location: '1010 Willamette St, Eugene, OR 97401'},
-  {title: 'Level Up Arcade', location: '1290 Oak St, Eugene, OR 97401'},
-  {title: 'Empire Buffet', location: '1933 Franklin Blvd, Eugene, OR 97403'}
-];
 
 function initMap() {
   geocoder = new google.maps.Geocoder();
@@ -34,12 +36,12 @@ function initMap() {
   });
 };
 
-function makeMarkers() {
 
+function makeMarkers() {
   var geocoder = new google.maps.Geocoder();
-  for (let  i = 0; i < addresses.length; i++) {
-    geocoder.geocode({'address' : addresses[i].location}, function(results, status) {
-        theTitle = addresses[i].title;
+  for (let  i = 0; i < model.addresses.length; i++) {
+    geocoder.geocode({'address' : model.addresses[i].location}, function(results, status) {
+        theTitle = model.addresses[i].title;
           if (status == 'OK') {
             map.setCenter(results[0].geometry.location);
               marker = new google.maps.Marker({
@@ -47,6 +49,7 @@ function makeMarkers() {
               title: theTitle,
               position: results[0].geometry.location
             });
+            model.markers.push(marker);
             addMessagetoMarker(marker, theTitle);
           } else {
             alert('Geocode failed due to: ' + status);
@@ -119,3 +122,5 @@ function addMessagetoMarker(marker, message) {
 // For setting the title of a google maps marker
 // 5. http://www.jstips.co/en/javascript/closures-inside-loops/
 // For javascript closures in for loops
+// 6. http://todomvc.com/examples/knockoutjs/
+// For getting reference to create a dynamic search box.
