@@ -2,12 +2,26 @@ var map;
 var markers = []
 var map_center;
 var path_bounds;
+var theTitle;
 
 
-
+var addresses = [
+  {title: 'Jordan Schnitzer Museum of Art', location: '1430 Johnson Lane, Eugene, OR 97403'},
+  {title: 'University of Oregon', location: '1585 E 13th Ave, Eugene, OR 97403'},
+  {title: 'Gutenberg College', location: '1883 University St, Eugene, OR 97403'},
+  {title: 'Voodoo Doughnut', location: '20 E Broadway, Eugene, OR 97401'},
+  {title: 'The Jazz Station', location: '124 W Broadway, Eugene, OR 97401'},
+  {title: 'Cowfish Dance Club & Cafe', location: '62 W Broadway, Eugene, OR 97401'},
+  {title: 'Eugene Public Library', location: '100 W 10th Ave, Eugene, OR 97401'},
+  {title: 'Cheba Hut', location: '339 E. 11th Ave., Eugene, OR 97401'},
+  {title: 'McDonald Theater', location: '1010 Willamette St, Eugene, OR 97401'},
+  {title: 'Level Up Arcade', location: '1290 Oak St, Eugene, OR 97401'},
+  {title: 'Empire Buffet', location: '1933 Franklin Blvd, Eugene, OR 97403'}
+];
 
 function initMap() {
   geocoder = new google.maps.Geocoder();
+  infowindow = new google.maps.InfoWindow;
   map_center = new google.maps.LatLng(44.039181, -123.074271);
   map = new google.maps.Map(document.getElementById('map'), {
     center: map_center,
@@ -21,36 +35,30 @@ function initMap() {
 };
 
 function makeMarkers() {
-  var addresses = [
-    {title: 'Jordan Schnitzer Museum of Art', location: '1430 Johnson Lane, Eugene, OR 97403'},
-    {title: 'University of Oregon', location: '1585 E 13th Ave, Eugene, OR 97403'},
-    {title: 'Gutenberg College', location: '1883 University St, Eugene, OR 97403'}
-    // '20 E Broadway, Eugene, OR 97401',
-    // '124 W Broadway, Eugene, OR 97401',
-    // '62 W Broadway, Eugene, OR 97401',
-    // '100 W 10th Ave, Eugene, OR 97401',
-    // '339 E. 11th Ave., Eugene, OR 97401',
-    // '1010 Willamette St, Eugene, OR 97401',
-    // '1290 Oak St, Eugene, OR 97401',
-    // '1933 Franklin Blvd, Eugene, OR 97403'
-  ];
+
   var geocoder = new google.maps.Geocoder();
-  for (i = 0; i < addresses.length; i++) {
-    var theTitle = addresses[i].title;
-    var infowindow = new google.maps.InfoWindow;
-    geocoder.geocode( {'address' : addresses[i].location}, function(results, status) {
-        if (status == 'OK') {
-          map.setCenter(results[0].geometry.location);
-          var marker = new google.maps.Marker({
-            map: map,
-            position: results[0].geometry.location
-          });
-          markers.push(marker);
-        } else {
-          alert('Geocode failed due to: ' + status);
-        }
+  for (let  i = 0; i < addresses.length; i++) {
+    geocoder.geocode({'address' : addresses[i].location}, function(results, status) {
+        theTitle = addresses[i].title;
+          if (status == 'OK') {
+            map.setCenter(results[0].geometry.location);
+              marker = new google.maps.Marker({
+              map: map,
+              title: theTitle,
+              position: results[0].geometry.location
+            });
+            addMessagetoMarker(marker, theTitle);
+          } else {
+            alert('Geocode failed due to: ' + status);
+          }
       });
-      console.log(theTitle);
+
+      // console.log(theTitle);
+      // google.maps.event.addListener(marker, 'click', (function(titleCopy) {
+      //   return function() {
+      //     console.log(titleCopy);
+      //   }
+      // }(theTitle)));
       // markers.addListener('click', function() {
       //   markers.setAnimation(google.maps.Animation.BOUNCE);
       //   setTimeout(function () {
@@ -61,16 +69,16 @@ function makeMarkers() {
       //     });
       //     infowindow.open(map, marker);
       //   });
-      // addMessagetoMarker(marker, theTitle)
       }
-  console.log(markers);
 }
+
 
 function addMessagetoMarker(marker, message) {
   // for (i = 0; i < markers.length; i++) {
   //   console.log(markers[i]);
   // }
   marker.addListener('click', function() {
+    console.log(marker);
     marker.setAnimation(google.maps.Animation.BOUNCE);
     setTimeout(function () {
       marker.setAnimation(null);
@@ -107,3 +115,7 @@ function addMessagetoMarker(marker, message) {
 // 2. https://stackoverflow.com/questions/7339200/bounce-a-pin-in-google-maps-once
 // For animating a google marker.
 // 3. Google Maps API docs!
+// 4. https://stackoverflow.com/questions/19279199/title-of-a-marker-of-google-map-marker-api
+// For setting the title of a google maps marker
+// 5. http://www.jstips.co/en/javascript/closures-inside-loops/
+// For javascript closures in for loops
