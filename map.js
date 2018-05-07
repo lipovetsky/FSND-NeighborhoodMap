@@ -17,8 +17,8 @@ var model = {
     {title: 'Level Up Arcade', location: '1290 Oak St, Eugene, OR 97401'},
     {title: 'Empire Buffet', location: '1933 Franklin Blvd, Eugene, OR 97403'}
   ],
-  markers: []
-}
+  markers: ko.observableArray([])
+};
 
 
 function initMap() {
@@ -33,6 +33,7 @@ function initMap() {
 
   google.maps.event.addDomListener(window, 'resize', function() {
     map.setCenter(map_center);
+
   });
 };
 
@@ -49,7 +50,7 @@ function makeMarkers() {
               title: theTitle,
               position: results[0].geometry.location
             });
-            model.markers.push(marker);
+            model.markers().push(marker);
             addMessagetoMarker(marker, theTitle);
           } else {
             alert('Geocode failed due to: ' + status);
@@ -73,7 +74,7 @@ function makeMarkers() {
       //     infowindow.open(map, marker);
       //   });
       }
-}
+};
 
 
 function addMessagetoMarker(marker, message) {
@@ -81,7 +82,6 @@ function addMessagetoMarker(marker, message) {
   //   console.log(markers[i]);
   // }
   marker.addListener('click', function() {
-    console.log(marker);
     marker.setAnimation(google.maps.Animation.BOUNCE);
     setTimeout(function () {
       marker.setAnimation(null);
@@ -93,7 +93,32 @@ function addMessagetoMarker(marker, message) {
     });
 };
 
+function hideMarker(marker) {
+  marker.setMap(null);
+};
 
+function viewModel(locations) {
+  var self = this;
+  self.Location = function() {
+    this.title = ko.observable(locations.title);
+    this.address = ko.observable(locations.location);
+  };
+
+  self.locationListModel = function() {
+    self.names = ko.observableArray([]);
+    self.name = ko.observable();
+    console.log(model.markers().length);
+    for (let i = 0; i < locations.length; i++) {
+      name = locations[i].title;
+      address = locations[i].location;
+      self.names.push(new Location({ title: name, location: address }));
+    };
+    console.log(self.names());
+  };
+}
+// ko.applyBindings(new locationListModel(model.addresses));
+ko.applyBindings(new viewModel(model.addresses));
+// Dude. You need one big view model with all the observables. Because it ain't getting bound!!!!
 
 // Places to investigate: Museum of Natural and Cultural History
 // Jordan Schnitzer Museum of Art
@@ -124,3 +149,5 @@ function addMessagetoMarker(marker, message) {
 // For javascript closures in for loops
 // 6. http://todomvc.com/examples/knockoutjs/
 // For getting reference to create a dynamic search box.
+// 7. http://knockoutjs.com/documentation/value-binding.html
+// Learning how to create a dynamic search box with valueUpdate: afterkeydown
