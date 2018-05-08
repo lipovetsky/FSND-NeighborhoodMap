@@ -99,23 +99,20 @@ function hideMarker(marker) {
 
 function viewModel(locations) {
   var self = this;
-  self.Location = function() {
-    this.title = ko.observable(locations.title);
-    this.address = ko.observable(locations.location);
+  self.names = ko.observableArray([]);
+
+  for (let i = 0; i < locations.length; i++) {
+    name = locations[i].title;
+    address = locations[i].location;
+    var theListItem = document.getElementsByTagName('li')[2];
+    self.names.push({ title: name, location: address });
   };
 
-  self.locationListModel = function() {
-    self.names = ko.observableArray([]);
-    self.name = ko.observable();
-    console.log(model.markers().length);
-    for (let i = 0; i < locations.length; i++) {
-      name = locations[i].title;
-      address = locations[i].location;
-      self.names.push(new Location({ title: name, location: address }));
-    };
-    console.log(self.names());
+  self.addLinks = function() {
+    self.names.remove()
   };
-}
+};
+
 // ko.applyBindings(new locationListModel(model.addresses));
 ko.applyBindings(new viewModel(model.addresses));
 // Dude. You need one big view model with all the observables. Because it ain't getting bound!!!!

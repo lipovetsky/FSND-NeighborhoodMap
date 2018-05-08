@@ -10,8 +10,8 @@
   <body>
     <input id="dynamic-search-bar" placeholder="Enter search here!"></input>
     <br><br>
-    <ul class="markerList" data-bind="foreach: names">
-      <li data-bind="text: title"></li>
+    <ul class="markerList" data-bind="foreach: names()">
+      <li data-bind="text: title, click: addLinks()"></li>
     </ul>
     <div id="map"></div>
   </body>
