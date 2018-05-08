@@ -109,7 +109,7 @@ function viewModel(locations) {
   };
 
   self.addLinks = function() {
-    self.names.remove()
+    console.log("I love you");
   };
 };
 
