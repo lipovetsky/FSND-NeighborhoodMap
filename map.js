@@ -104,13 +104,14 @@ function viewModel(locations) {
   for (let i = 0; i < locations.length; i++) {
     name = locations[i].title;
     address = locations[i].location;
-    var theListItem = document.getElementsByTagName('li')[2];
+    theNew = locations[i];
     self.names.push({ title: name, location: address });
+    self.addLinks = function(i) {
+        console.log(i);
+    };
   };
 
-  self.addLinks = function() {
-    console.log("I love you");
-  };
+
 };
 
 // ko.applyBindings(new locationListModel(model.addresses));
