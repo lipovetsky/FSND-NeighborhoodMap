@@ -51,7 +51,7 @@ function makeMarkers() {
               position: results[0].geometry.location
             });
             model.markers().push(marker);
-            addMessagetoMarker(marker, theTitle);
+            addMessagetoMarker(model.markers()[i], theTitle);
           } else {
             alert('Geocode failed due to: ' + status);
           }
@@ -108,6 +108,7 @@ function viewModel(locations) {
     self.names.push({ title: name, location: address });
     self.addLinks = function(i) {
         console.log(i);
+        infowindow.open(model.markers());
     };
   };
 
