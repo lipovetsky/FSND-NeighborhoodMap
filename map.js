@@ -17,7 +17,8 @@ var model = {
     {title: 'Level Up Arcade', location: '1290 Oak St, Eugene, OR 97401'},
     {title: 'Empire Buffet', location: '1933 Franklin Blvd, Eugene, OR 97403'}
   ],
-  markers: ko.observableArray([])
+  markers: ko.observableArray([]),
+  theAnswer: ko.observableArray([])
 };
 
 
@@ -33,7 +34,6 @@ function initMap() {
 
   google.maps.event.addDomListener(window, 'resize', function() {
     map.setCenter(map_center);
-
   });
 };
 
@@ -50,7 +50,8 @@ function makeMarkers() {
               title: theTitle,
               position: results[0].geometry.location
             });
-            model.markers().push(marker);
+            model.markers.push(marker);
+            // console.log(model.markers()[i]);
             addMessagetoMarker(model.markers()[i], theTitle);
           } else {
             alert('Geocode failed due to: ' + status);
@@ -77,6 +78,7 @@ function makeMarkers() {
 };
 
 
+
 function addMessagetoMarker(marker, message) {
   // for (i = 0; i < markers.length; i++) {
   //   console.log(markers[i]);
@@ -90,33 +92,64 @@ function addMessagetoMarker(marker, message) {
         content: message
       });
       infowindow.open(map, marker);
+
     });
 };
+
+function displayMessage(map, marker) {
+  infowindow.open(map, marker)
+}
 
 function hideMarker(marker) {
   marker.setMap(null);
 };
 
-function viewModel(locations) {
-  var self = this;
-  self.names = ko.observableArray([]);
+function addLocation(location) {
+  model.theAnswer.push(location);
+  console.log(location);
+}
 
-  for (let i = 0; i < locations.length; i++) {
+function viewModel(locations, marker) {
+  var self = this;
+  console.log(marker);
+  for (var i=0; i < locations.length; i++) {
+    addLocation(locations[i]);
+  }
+  // marker.forEach(function(element) {
+  //   console.log(element);
+  //   console.log("YO!");
+  // });
+  // self.names = ko.observableArray([]);
+  for (var i = 0; i < locations.length; i++) {
     name = locations[i].title;
     address = locations[i].location;
-    theNew = locations[i];
-    self.names.push({ title: name, location: address });
-    self.addLinks = function(i) {
-        console.log(i);
-        infowindow.open(model.markers());
+    console.log(model.theAnswer()[i]);
+    console.log(marker[i]);
+
+    // self.names.push({ title: name, location: address, marker: theMarker });
+    self.addLinks = function(num) {
+        console.log(num);
+        console.log(num.map);
+        num.setAnimation(google.maps.Animation.BOUNCE);
+          setTimeout(function () {
+            num.setAnimation(null);
+          }, 1400);
+            infowindow.setOptions( {
+              content: num.title
+            });
+            infowindow.open(map, num);
+        // var theMarker = markers[i]
+        // console.log(theMarker);
+        // addMessagetoMarker(theMarker, 'love');
+
     };
   };
 
 
 };
 
-// ko.applyBindings(new locationListModel(model.addresses));
-ko.applyBindings(new viewModel(model.addresses));
+ko.applyBindings(new viewModel(model.addresses, model.markers()));
+
 // Dude. You need one big view model with all the observables. Because it ain't getting bound!!!!
 
 // Places to investigate: Museum of Natural and Cultural History

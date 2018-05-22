@@ -10,7 +10,7 @@
   <body>
     <input id="dynamic-search-bar" placeholder="Enter search here!"></input>
     <br><br>
-    <ul class="markerList" data-bind="foreach: names()">
+    <ul class="markerList" data-bind="foreach: model.markers">
       <li data-bind="text: title, click: $root.addLinks">
     </ul>
     <div id="map"></div>
