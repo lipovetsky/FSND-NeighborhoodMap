@@ -95,34 +95,31 @@ function viewModel(locations, marker) {
               content: num.title
             });
             infowindow.open(map, num);
-
-          // });
-        // num.setAnimation(google.maps.Animation.BOUNCE);
-        //   setTimeout(function () {
-        //     num.setAnimation(null);
-        //   }, 1400);
-        //     infowindow.setOptions( {
-        //       content: num.title
-        //     });
-            // infowindow.open(map, num);
-        // var theMarker = markers[i]
-        // console.log(theMarker);
-        // addMessagetoMarker(theMarker, 'love');
-        // console.log(ko.utils.arrayFilter(locations.title));
     };
   }
+
   function search(value) {
     for (var a in locations) {
       locations.removeAll();
-      console.log(locations[a]);
       if(locations[a].title.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
         locations.push(locations[a]);
       }
     }
   }
 
-  var theLocations = {
-    query: ko.observable("")
+  self.theLocations = {
+    query: ko.observable(""),
+    theModel: ko.observable(model.markers),
+    search: function(value) {
+      model.markers.removeAll();
+
+      for (var x in theModel.markers) {
+        console.log(model.markers[x]);
+        if(markers[x].toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+          model.markers.push(model.markers()[x]);
+        }
+      }
+    }
     }
 };
 
@@ -130,9 +127,9 @@ viewModel.locations = ko.dependentObservable(function() {
   console.log(viewModel);
 }, viewModel)
 
-var yoyo = new viewModel(model.addresses, model.markers())
+var yoyo = new viewModel(model.addresses, model.markers());
+yoyo.theLocations.query.subscribe(yoyo.theLocations.search);
 ko.applyBindings(yoyo);
-viewModel.theLocations.query.subscribe(viewModel.search);
 
 // Dude. You need one big view model with all the observables. Because it ain't getting bound!!!!
 
@@ -170,3 +167,5 @@ viewModel.theLocations.query.subscribe(viewModel.search);
 // 9. http://jsfiddle.net/mythical/XJEzc/
 // For helping with creating a filterable search box.
 // Learning how to create a dynamic search box with valueUpdate: afterkeydown
+// 10. https://stackoverflow.com/questions/9960881/knockout-js-calling-method-outside-of-view-model
+// For helping me access the viewModel outside of it.
