@@ -17,8 +17,7 @@ var model = {
     {title: "Level Up Arcade", location: "1290 Oak St, Eugene, OR 97401"},
     {title: "Empire Buffet", location: "1933 Franklin Blvd, Eugene, OR 97403"}
   ],
-  markers: ko.observableArray([])
-};
+  markers: ko.observableArray([])};
 
 
 function initMap() {
@@ -68,8 +67,8 @@ function hideMarker(marker) {
 
 
 function viewModel(locations, marker) {
-  query = ko.observable("");
   var self = this;
+  query = ko.observable("");
   // for (var i=0; i < locations.length; i++) {
   //   addLocation(locations[i]);
   // }
@@ -98,40 +97,51 @@ function viewModel(locations, marker) {
     };
   }
 
-  function search(value) {
-    for (var a in locations) {
-      locations.removeAll();
-      if(locations[a].title.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
-        locations.push(locations[a]);
-      }
-    }
-  }
+  // function search(value) {
+  //   for (var a in locations) {
+  //     locations.removeAll();
+  //     console.log(locations[a]);
+  //     if(locations[a].title.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+  //       locations.push(locations[a]);
+  //     }
+  //   }
+  // }
 
   self.theLocations = {
-    query: ko.observable(""),
+    theQuery: ko.observable(""),
     theModel: ko.observable(model.markers),
-    search: function(value) {
-      model.markers.removeAll();
-
-      for (var x in theModel.markers) {
-        console.log(model.markers[x]);
-        if(markers[x].toLowerCase().indexOf(value.toLowerCase()) >= 0) {
-          model.markers.push(model.markers()[x]);
-        }
-      }
-    }
+    filter: ko.dependentObservable(function() {
+      var search = query().toLowerCase();
+      return ko.utils.arrayFilter(model.markers, function(theName) {
+        return theName.toLowerCase().indexOf(search) >= 0;
+    });
+  }, self)
+    // search: function(value) {
+    //   // model.markers.removeAll();
+    //
+    //
+    //   for (var x in model.markers) {
+    //     console.log(model.markers[x]);
+    //     if(model.markers[x].toString().toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+    //       model.markers.push(model.markers()[x]);
+    //     }
+    //   }
+    // }
     }
 };
 
-viewModel.locations = ko.dependentObservable(function() {
-  console.log(viewModel);
-}, viewModel)
+
+// viewModel.locations = ko.dependentObservable(function() {
+//   console.log(viewModel);
+// }, viewModel)
 
 var yoyo = new viewModel(model.addresses, model.markers());
-yoyo.theLocations.query.subscribe(yoyo.theLocations.search);
+yoyo.theLocations.theQuery.subscribe(yoyo.theLocations.filter);
 ko.applyBindings(yoyo);
 
 // Dude. You need one big view model with all the observables. Because it ain't getting bound!!!!
+
+// Yelp set function array
 
 // Places to investigate: Museum of Natural and Cultural History
 // Jordan Schnitzer Museum of Art
