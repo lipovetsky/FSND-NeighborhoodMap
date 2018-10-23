@@ -8,7 +8,7 @@
   </head>
 
   <body>
-    <input id="dynamic-search-bar" placeholder="Enter search here!" data-bind="value: theLocations.query, valueUpdate: 'keyup'" ></input>
+    <input id="dynamic-search-bar" placeholder="Enter search here!" data-bind="value: query, valueUpdate: 'keyup'" ></input>
     <br><br>
     <ul class="markerList" data-bind="foreach: model.markers">
       <li data-bind="text: title, click: $root.addLinks">

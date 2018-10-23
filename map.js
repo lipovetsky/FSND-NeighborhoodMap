@@ -17,7 +17,8 @@ var model = {
     {title: "Level Up Arcade", location: "1290 Oak St, Eugene, OR 97401"},
     {title: "Empire Buffet", location: "1933 Franklin Blvd, Eugene, OR 97403"}
   ],
-  markers: ko.observableArray([])};
+  markers: ko.observableArray([])
+};
 
 
 function initMap() {
@@ -28,7 +29,9 @@ function initMap() {
     center: map_center,
     zoom: 14
   });
-  makeMarkers();
+  if (model.markers.length === 0) {
+    makeMarkers();
+  }
 
   google.maps.event.addDomListener(window, "resize", function() {
     map.setCenter(map_center);
@@ -51,7 +54,7 @@ function makeMarkers() {
             model.markers.push(marker);
             marker.addListener("click", (function(markerCopy) {
               return function() {
-                yoyo.addLinks(markerCopy);
+                finalCopy.addLinks(markerCopy);
               }
             })(marker));
           } else {
@@ -67,8 +70,8 @@ function hideMarker(marker) {
 
 
 function viewModel(locations, marker) {
-  var self = this;
   query = ko.observable("");
+  var self = this;
   // for (var i=0; i < locations.length; i++) {
   //   addLocation(locations[i]);
   // }
@@ -80,7 +83,7 @@ function viewModel(locations, marker) {
   for (var i = 0; i < locations.length; i++) {
     name = locations[i].title;
     address = locations[i].location;
-    console.log(marker[i]);
+    // console.log(marker[i]);
 
     // self.names.push({ title: name, location: address, marker: theMarker });
     self.addLinks = function(num) {
@@ -97,48 +100,38 @@ function viewModel(locations, marker) {
     };
   }
 
-  // function search(value) {
-  //   for (var a in locations) {
-  //     locations.removeAll();
-  //     console.log(locations[a]);
-  //     if(locations[a].title.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
-  //       locations.push(locations[a]);
-  //     }
-  //   }
-  // }
-
-  self.theLocations = {
-    theQuery: ko.observable(""),
-    theModel: ko.observable(model.markers),
-    filter: ko.dependentObservable(function() {
-      var search = query().toLowerCase();
-      return ko.utils.arrayFilter(model.markers, function(theName) {
-        return theName.toLowerCase().indexOf(search) >= 0;
-    });
-  }, self)
-    // search: function(value) {
-    //   // model.markers.removeAll();
-    //
-    //
-    //   for (var x in model.markers) {
-    //     console.log(model.markers[x]);
-    //     if(model.markers[x].toString().toLowerCase().indexOf(value.toLowerCase()) >= 0) {
-    //       model.markers.push(model.markers()[x]);
-    //     }
-    //   }
-    // }
+  self.theLocations = ko.dependentObservable(function() {
+    var search = this.query().toLowerCase();
+    if (search === '') {
+      return model.addresses
     }
-};
+    else {
+      return ko.utils.arrayFilter(marker, function(mark) {
+        // console.log(mark);
+        console.log(search);
+        model.markers.removeAll();
+        // initMap();
+        // return mark.visible = false;
+        if (mark) {
+          return mark.title.toLowerCase().indexOf(search) >= 0;
+        }
+      });
+    }
 
+  })
+    console.log(locations,marker);
+
+};
 
 // viewModel.locations = ko.dependentObservable(function() {
 //   console.log(viewModel);
 // }, viewModel)
 
-var yoyo = new viewModel(model.addresses, model.markers());
-yoyo.theLocations.theQuery.subscribe(yoyo.theLocations.filter);
-ko.applyBindings(yoyo);
+var finalCopy = new viewModel(model.addresses, model.markers());
+// yoyo.theLocations.query.subscribe(yoyo.theLocations.search);
+ko.applyBindings(finalCopy);
 
+// First of all. Why are the markers not disappearing?
 // Dude. You need one big view model with all the observables. Because it ain't getting bound!!!!
 
 // Yelp set function array
