@@ -54,7 +54,7 @@ function makeMarkers() {
             model.markers.push(marker);
             marker.addListener("click", (function(markerCopy) {
               return function() {
-                finalCopy.addLinks(markerCopy);
+                addLinks(markerCopy);
               }
             })(marker));
           } else {
@@ -64,14 +64,31 @@ function makeMarkers() {
       }
 };
 
+function addLinks(num) {
+      num.setAnimation(google.maps.Animation.BOUNCE);
+      setTimeout(function () {
+        num.setAnimation(null);
+      }, 1400);
+        infowindow.setOptions( {
+          content: num.title
+        });
+        infowindow.open(map, num);
+};
+
+function yelpCall() {
+  var theID = 'vwzc4qCFLh-oN5XwthJ64A'
+  var theAPI = 'omxUs0A3iJIr2nxuVHlTzktNO_uzyKQzOtyr0LrXNgdGHhgw4moXlTN61WpVqq95-ecpKFPBKx13kDe2jSOYmEBbnQlnK2frXP4p5sknZpz4GyHcW90phDJjO43UW3Yx';
+  searchLocation = 'https://api.yelp.com/v3/businesses/search?'
+}
 function hideMarker(marker) {
-  marker.setMap(null);
+  marker.setVisible(false);
+  infowindow.close();
 };
 
 function showMarker(marker) {
-  marker.setMap(map);
-}
+  marker.setVisible(true);
 
+}
 
 function viewModel(locations, marker) {
   query = ko.observable("");
@@ -79,52 +96,38 @@ function viewModel(locations, marker) {
   for (var i = 0; i < locations.length; i++) {
     name = locations[i].title;
     address = locations[i].location;
-    self.addLinks = function(num) {
-        console.log(num);
-        console.log(num.map);
-          num.setAnimation(google.maps.Animation.BOUNCE);
-          setTimeout(function () {
-            num.setAnimation(null);
-          }, 1400);
-            infowindow.setOptions( {
-              content: num.title
-            });
-            infowindow.open(map, num);
-    };
   }
 
   self.theLocations = ko.dependentObservable(function() {
     var search = this.query().toLowerCase();
     if (search === '') {
-      return model.addresses
+      for (var i = 0; i < model.markers().length; i++) {
+        showMarker(model.markers()[i]);
+      }
+      return model.markers();
     }
     else {
+      // model.markers(false);
       var filteredMarkers = ko.utils.arrayFilter(marker, function(mark) {
-        // model.markers.removeAll();
-        // initMap();
-        if (search === '') {
-          makeMarkers();
-        }
         hideMarker(mark);
         if (mark.title.toLowerCase().indexOf(search) >= 0) {
           console.log(mark.title);
+          mark.setVisible(null);
           showMarker(mark);
+          // model.markers(true);
           // model.markers.push(mark.title);
           return mark.title.toLowerCase().indexOf(search) >= 0;
         }
+        // model.markers.removeAll();
+        // model.markers.push(marker);
       });
       return filteredMarkers;
     }
   })
-    console.log(locations,marker);
+    // console.log(locations,marker);
 };
 
-// viewModel.locations = ko.dependentObservable(function() {
-//   console.log(viewModel);
-// }, viewModel)
-
 var finalCopy = new viewModel(model.addresses, model.markers());
-// yoyo.theLocations.query.subscribe(yoyo.theLocations.search);
 ko.applyBindings(finalCopy);
 
 // // First of all. Why are the markers not disappearing?
@@ -168,8 +171,11 @@ ko.applyBindings(finalCopy);
 // // Learning how to create a dynamic search box with valueUpdate: afterkeydown
 // // 10. https://stackoverflow.com/questions/9960881/knockout-js-calling-method-outside-of-view-model
 // // For helping me access the viewModel outside of it.
-//
-
+//    11. https://developers.google.com/maps/documentation/javascript/examples/marker-remove
+//    12. https://stackoverflow.com/questions/45422066/set-marker-visible-with-knockout-js-ko-utils-arrayfilter
+      // For help with removing markers and making them invisible.
+// 13. https://github.com/Yelp/yelp-fusion/blob/master/fusion/node/sample.js
+// For help with Yelp API
 
 // var map;
 // var map_center;

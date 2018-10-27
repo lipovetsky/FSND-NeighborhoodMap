@@ -8,10 +8,10 @@
   </head>
 
   <body>
-    <input id="dynamic-search-bar" placeholder="Enter search here!" data-bind="value: query, valueUpdate: 'keyup'" ></input>
+    <input id="dynamic-search-bar" placeholder="Enter search here!" data-bind="textInput: query, valueUpdate: 'keyup'" ></input>
     <br><br>
-    <ul class="markerList" data-bind="foreach: model.markers">
-      <li data-bind="text: title, click: $root.addLinks">
+    <ul class="markerList" data-bind="foreach: theLocations">
+      <li data-bind="text: title, click: addLinks">
     </ul>
     <div id="map"></div>
   </body>
