@@ -31,6 +31,7 @@ function initMap() {
   });
   if (model.markers.length === 0) {
     makeMarkers();
+
   }
 
   google.maps.event.addDomListener(window, "resize", function() {
@@ -63,22 +64,42 @@ function makeMarkers() {
       });
       }
 };
+var searchLocation = 'https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search'
+searchLocation += '?' + $.param({
+  // 'term':num.title,
+  'location':'eugene, oregon'
+});
+$.ajax({
+  url: searchLocation,
+  headers: {
+    'Authorization': 'Bearer omxUs0A3iJIr2nxuVHlTzktNO_uzyKQzOtyr0LrXNgdGHhgw4moXlTN61WpVqq95-ecpKFPBKx13kDe2jSOYmEBbnQlnK2frXP4p5sknZpz4GyHcW90phDJjO43UW3Yx'
+  },
+  method: 'GET',
+  dataType: 'json',
+  success: function(data) {
 
+          }
+});
 function addLinks(num) {
+  var theText = 'now loading...'
+      // console.log(num.title)
       num.setAnimation(google.maps.Animation.BOUNCE);
       setTimeout(function () {
         num.setAnimation(null);
       }, 1400);
-        infowindow.setOptions( {
-          content: num.title
+      // makeDomWindow(data.businesses[0]);
+        infowindow.setOptions({
+          content: num.title + (setTimeout(function() {
+              console.log(theText)
+            }, 1000))
         });
         infowindow.open(map, num);
+
+        // yelpCall(num.title);
 };
 
-function yelpCall() {
-  var theID = 'vwzc4qCFLh-oN5XwthJ64A'
-  var theAPI = 'omxUs0A3iJIr2nxuVHlTzktNO_uzyKQzOtyr0LrXNgdGHhgw4moXlTN61WpVqq95-ecpKFPBKx13kDe2jSOYmEBbnQlnK2frXP4p5sknZpz4GyHcW90phDJjO43UW3Yx';
-  searchLocation = 'https://api.yelp.com/v3/businesses/search?'
+function makeDomWindow(thePlace) {
+  console.log(thePlace);
 }
 function hideMarker(marker) {
   marker.setVisible(false);
@@ -175,6 +196,8 @@ ko.applyBindings(finalCopy);
 //    12. https://stackoverflow.com/questions/45422066/set-marker-visible-with-knockout-js-ko-utils-arrayfilter
       // For help with removing markers and making them invisible.
 // 13. https://github.com/Yelp/yelp-fusion/blob/master/fusion/node/sample.js
+// 14. https://www.youtube.com/watch?v=0LFKxiATLNQ
+// 15. https://stackoverflow.com/questions/51391801/cannot-retrieve-data-from-yelp-api-using-jquery-ajax
 // For help with Yelp API
 
 // var map;
