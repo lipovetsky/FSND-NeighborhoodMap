@@ -7,7 +7,6 @@ var model = {
     addresses: [
     {title: "Jordan Schnitzer Museum of Art", location: "1430 Johnson Lane, Eugene, OR 97403"},
     {title: "University of Oregon", location: "1585 E 13th Ave, Eugene, OR 97403"},
-    {title: "Gutenberg College", location: "1883 University St, Eugene, OR 97403"},
     {title: "Voodoo Doughnut", location: "20 E Broadway, Eugene, OR 97401"},
     {title: "The Jazz Station", location: "124 W Broadway, Eugene, OR 97401"},
     {title: "Cowfish Dance Club & Cafe", location: "62 W Broadway, Eugene, OR 97401"},
@@ -22,84 +21,123 @@ var model = {
 
 
 function initMap() {
-  geocoder = new google.maps.Geocoder();
-  infowindow = new google.maps.InfoWindow;
-  map_center = new google.maps.LatLng(44.039181, -123.074271);
-  map = new google.maps.Map(document.getElementById("map"), {
-    center: map_center,
-    zoom: 14
-  });
-  if (model.markers.length === 0) {
-    makeMarkers();
-
+  try {
+    geocoder = new google.maps.Geocoder();
+    infowindow = new google.maps.InfoWindow;
+    map_center = new google.maps.LatLng(44.039181, -123.074271);
+    map = new google.maps.Map(document.getElementById("map"), {
+      center: map_center,
+      zoom: 14
+    });
+    if (model.markers.length === 0) {
+      makeMarkers();
+    }
+    google.maps.event.addDomListener(window, "resize", function() {
+      map.setCenter(map_center);
+    })
   }
-
-  google.maps.event.addDomListener(window, "resize", function() {
-    map.setCenter(map_center);
-  })
+  catch(error) {
+    alert('The map could not load. Try again.')
+  }
 };
 
 
 function makeMarkers() {
   var geocoder = new google.maps.Geocoder();
-  for (let  i = 0; i < model.addresses.length; i++) {
-    geocoder.geocode({"address" : model.addresses[i].location}, function(results, status) {
-        theTitle = model.addresses[i].title;
-          if (status == "OK") {
-            map.setCenter(results[0].geometry.location);
-              marker = new google.maps.Marker({
-              map: map,
-              title: theTitle,
-              position: results[0].geometry.location
-            });
-            model.markers.push(marker);
-            marker.addListener("click", (function(markerCopy) {
-              return function() {
-                addLinks(markerCopy);
-              }
-            })(marker));
-          } else {
-            alert("Geocode failed due to: " + status);
-          }
-      });
-      }
-};
-var searchLocation = 'https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search'
-searchLocation += '?' + $.param({
-  // 'term':num.title,
-  'location':'eugene, oregon'
-});
-$.ajax({
-  url: searchLocation,
-  headers: {
-    'Authorization': 'Bearer omxUs0A3iJIr2nxuVHlTzktNO_uzyKQzOtyr0LrXNgdGHhgw4moXlTN61WpVqq95-ecpKFPBKx13kDe2jSOYmEBbnQlnK2frXP4p5sknZpz4GyHcW90phDJjO43UW3Yx'
-  },
-  method: 'GET',
-  dataType: 'json',
-  success: function(data) {
-
-          }
-});
-function addLinks(num) {
-  var theText = 'now loading...'
-      // console.log(num.title)
-      num.setAnimation(google.maps.Animation.BOUNCE);
-      setTimeout(function () {
-        num.setAnimation(null);
-      }, 1400);
-      // makeDomWindow(data.businesses[0]);
-        infowindow.setOptions({
-          content: num.title + (setTimeout(function() {
-              console.log(theText)
-            }, 1000))
+  try {
+    for (let  i = 0; i < model.addresses.length; i++) {
+      geocoder.geocode({"address" : model.addresses[i].location}, function(results, status) {
+          theTitle = model.addresses[i].title;
+            if (status == "OK") {
+              map.setCenter(results[0].geometry.location);
+                marker = new google.maps.Marker({
+                map: map,
+                title: theTitle,
+                position: results[0].geometry.location
+              });
+              model.markers.push(marker);
+              marker.addListener("click", (function(markerCopy) {
+                return function() {
+                  addLinks(markerCopy);
+                }
+              })(marker));
+            } else {
+              alert("Geocode failed due to: " + status);
+            }
         });
-        infowindow.open(map, num);
+        }
+  }
+  catch(error) {
+    alert('Could not make markers. Try again.')
+  }
+};
+
+function addLinks(num) {
+  console.log(num.title)
+      var searchLocation = 'https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search'
+      searchLocation += '?' + $.param({
+        'term':num.title,
+        'location':'eugene, oregon'
+      });
+      $.ajax({
+        url: searchLocation,
+        headers: {
+          'Authorization': 'Bearer omxUs0A3iJIr2nxuVHlTzktNO_uzyKQzOtyr0LrXNgdGHhgw4moXlTN61WpVqq95-ecpKFPBKx13kDe2jSOYmEBbnQlnK2frXP4p5sknZpz4GyHcW90phDJjO43UW3Yx'
+        },
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          num.setAnimation(google.maps.Animation.BOUNCE);
+          setTimeout(function () {
+            num.setAnimation(null);
+          }, 1400);
+          // makeDomWindow(data.businesses[0]);
+            infowindow.setOptions( {
+              content: makeDomWindow(data.businesses[0]),
+              maxWidth: 200
+            });
+            infowindow.open(map, num);
+            google.maps.event.addDomListener(window, 'resize', function() {
+          infowindow.open(map);
+        });
+      },
+      error: function(request, status, error) {
+
+      }
+    });
 
         // yelpCall(num.title);
 };
 
 function makeDomWindow(thePlace) {
-  console.log(thePlace);
+  var theRatingImage;
+  var theFullAddress = thePlace.location.display_address[0] + '<br>'
+  + thePlace.location.display_address[1]
+
+  if (thePlace.rating === 3) {
+    theRatingImage = 'stars/regular_3.png'
+  }
+  else if (thePlace.rating === 3.5) {
+    theRatingImage = 'stars/regular_3_half.png'
+  }
+  else if (thePlace.rating === 4) {
+    theRatingImage = 'stars/regular_4.png'
+  }
+  else if (thePlace.rating === 4.5) {
+    theRatingImage = 'stars/regular_4_half.png'
+  }
+  else if (thePlace.rating === 5) {
+    theRatingImage ='stars/regular_5.png'
+  }
+
+
+
+
+  var theHTML = '<h2><a href="' + thePlace.url +  '" target="_blank">' + thePlace.name
+  + '</a></h2>' + theFullAddress + '<p><img src="' + theRatingImage + '"</img><br>'
+  + '<p><img id="theimages" src="' + thePlace.image_url + '">' + '<p>'
+  + '<img src="stars/logo.png" width="62.5" height="40">'
+  return theHTML
 }
 function hideMarker(marker) {
   marker.setVisible(false);
@@ -199,6 +237,8 @@ ko.applyBindings(finalCopy);
 // 14. https://www.youtube.com/watch?v=0LFKxiATLNQ
 // 15. https://stackoverflow.com/questions/51391801/cannot-retrieve-data-from-yelp-api-using-jquery-ajax
 // For help with Yelp API
+// 16. https://stackoverflow.com/questions/377644/jquery-ajax-error-handling-show-custom-exception-messages
+// For help with error handling in AJAX
 
 // var map;
 // var map_center;

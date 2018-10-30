@@ -16,3 +16,8 @@ li {
   width: 85%;
   margin-left: 5%;
 }
+
+#theimages {
+  max-width: 40%;
+  max-height: 40%;
+}
