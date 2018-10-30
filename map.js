@@ -101,9 +101,9 @@ function addLinks(num) {
           infowindow.open(map);
         });
       },
-      error: function(request, status, error) {
-
-      }
+        error: function(request, status, error) {
+          alert("Add Links is not working.")
+        }
     });
 
         // yelpCall(num.title);
