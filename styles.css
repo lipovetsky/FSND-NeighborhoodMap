@@ -20,19 +20,25 @@ ul {
 li {
   clear: both;
   float: left;
-  font-family: monospace;
-  font-size: 16px;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 20px;
 }
-
+.titleText {
+  margin-left: 3%;
+  text-align: center;
+  text-decoration: overline;
+  font-family: 'Times New Roman', Times, serif;
+}
 .theList {
   position: relative;
   float: left;
-  /*margin-left: 10%;*/
+  text-align: center;
+
 }
 #dynamic-search-bar {
   position: relative;
   float: left;
-  margin-left: 6%;
+  margin-left: 20%;
 }
 #map {
   position: relative;
