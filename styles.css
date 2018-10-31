@@ -1,3 +1,13 @@
+@media only screen and (max-width: 1546px) {
+  #map {
+    position: relative;
+    float: left;
+    height: 70%;
+    width: 70%;
+    margin-left: 10%;
+  }
+}
+
 html,
 body {
   height: 90%;
@@ -10,11 +20,25 @@ ul {
 li {
   clear: both;
   float: left;
+  font-family: monospace;
+  font-size: 16px;
+}
+
+.theList {
+  position: relative;
+  float: left;
+  /*margin-left: 10%;*/
+}
+#dynamic-search-bar {
+  position: relative;
+  float: left;
+  margin-left: 6%;
 }
 #map {
-  height: 90%;
-  width: 85%;
-  margin-left: 5%;
+  position: relative;
+  float: left;
+  height: 70%;
+  width: 70%;
 }
 
 #theimages {

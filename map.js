@@ -73,83 +73,86 @@ function makeMarkers() {
 };
 
 function addLinks(num) {
-  console.log(num.title)
-      var searchLocation = 'https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search'
-      searchLocation += '?' + $.param({
-        'term':num.title,
-        'location':'eugene, oregon'
-      });
-      $.ajax({
-        url: searchLocation,
-        headers: {
-          'Authorization': 'Bearer omxUs0A3iJIr2nxuVHlTzktNO_uzyKQzOtyr0LrXNgdGHhgw4moXlTN61WpVqq95-ecpKFPBKx13kDe2jSOYmEBbnQlnK2frXP4p5sknZpz4GyHcW90phDJjO43UW3Yx'
-        },
-        method: 'GET',
-        dataType: 'json',
-        success: function(data) {
-          num.setAnimation(google.maps.Animation.BOUNCE);
-          setTimeout(function () {
-            num.setAnimation(null);
-          }, 1400);
-          // makeDomWindow(data.businesses[0]);
-            infowindow.setOptions( {
-              content: makeDomWindow(data.businesses[0]),
-              maxWidth: 200
-            });
-            infowindow.open(map, num);
-            google.maps.event.addDomListener(window, 'resize', function() {
-          infowindow.open(map);
-        });
-      },
-        error: function(request, status, error) {
-          alert("Add Links is not working.")
-        }
-    });
 
-        // yelpCall(num.title);
+    var searchLocation = 'https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search'
+    searchLocation += '?' + $.param({
+      'term':num.title,
+      'location':'eugene, oregon'
+    });
+    $.ajax({
+      url: searchLocation,
+      headers: {
+        'Authorization': 'Bearer omxUs0A3iJIr2nxuVHlTzktNO_uzyKQzOtyr0LrXNgdGHhgw4moXlTN61WpVqq95-ecpKFPBKx13kDe2jSOYmEBbnQlnK2frXP4p5sknZpz4GyHcW90phDJjO43UW3Yx'
+      },
+      method: 'GET',
+      dataType: 'json',
+      success: function(data) {
+        num.setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout(function () {
+          num.setAnimation(null);
+        }, 1400);
+          infowindow.setOptions( {
+            content: makeDomWindow(data.businesses[0]),
+            maxWidth: 200
+          });
+          infowindow.open(map, num);
+          google.maps.event.addDomListener(window, 'resize', function() {
+        infowindow.open(map);
+      });
+    },
+      error: function(request, status, error) {
+        alert("Could not add links. Try again.")
+      }
+  });
 };
 
 function makeDomWindow(thePlace) {
-  var theRatingImage;
-  var theFullAddress = thePlace.location.display_address[0] + '<br>'
-  + thePlace.location.display_address[1]
+  try {
+    var theRatingImage;
+    var theFullAddress = thePlace.location.display_address[0] + '<br>'
+    + thePlace.location.display_address[1]
 
-  if (thePlace.rating === 3) {
-    theRatingImage = 'stars/regular_3.png'
-  }
-  else if (thePlace.rating === 3.5) {
-    theRatingImage = 'stars/regular_3_half.png'
-  }
-  else if (thePlace.rating === 4) {
-    theRatingImage = 'stars/regular_4.png'
-  }
-  else if (thePlace.rating === 4.5) {
-    theRatingImage = 'stars/regular_4_half.png'
-  }
-  else if (thePlace.rating === 5) {
-    theRatingImage ='stars/regular_5.png'
-  }
+    if (thePlace.rating === 3) {
+      theRatingImage = 'stars/regular_3.png'
+    }
+    else if (thePlace.rating === 3.5) {
+      theRatingImage = 'stars/regular_3_half.png'
+    }
+    else if (thePlace.rating === 4) {
+      theRatingImage = 'stars/regular_4.png'
+    }
+    else if (thePlace.rating === 4.5) {
+      theRatingImage = 'stars/regular_4_half.png'
+    }
+    else if (thePlace.rating === 5) {
+      theRatingImage ='stars/regular_5.png'
+    }
 
-
-
-
-  var theHTML = '<h2><a href="' + thePlace.url +  '" target="_blank">' + thePlace.name
-  + '</a></h2>' + theFullAddress + '<p><img src="' + theRatingImage + '"</img><br>'
-  + '<p><img id="theimages" src="' + thePlace.image_url + '">' + '<p>'
-  + '<img src="stars/logo.png" width="62.5" height="40">'
-  return theHTML
+    var theHTML = '<h2><a href="' + thePlace.url +  '" target="_blank">' + thePlace.name
+    + '</a></h2>' + theFullAddress + '<p><img src="' + theRatingImage + '"</img><br>'
+    + '<p><img id="theimages" src="' + thePlace.image_url + '">' + '<p>'
+    + '<img src="stars/logo.png" width="62.5" height="40">'
+    return theHTML
+  }
+  catch (error) {
+    alert ('Could not make InfoWindow. Try again.')
+  }
 }
+
+
 function hideMarker(marker) {
   marker.setVisible(false);
   infowindow.close();
 };
 
+
 function showMarker(marker) {
   marker.setVisible(true);
-
 }
 
+
 function viewModel(locations, marker) {
+try {
   query = ko.observable("");
   var self = this;
   for (var i = 0; i < locations.length; i++) {
@@ -157,7 +160,7 @@ function viewModel(locations, marker) {
     address = locations[i].location;
   }
 
-  self.theLocations = ko.dependentObservable(function() {
+self.theLocations = ko.dependentObservable(function() {
     var search = this.query().toLowerCase();
     if (search === '') {
       for (var i = 0; i < model.markers().length; i++) {
@@ -166,24 +169,23 @@ function viewModel(locations, marker) {
       return model.markers();
     }
     else {
-      // model.markers(false);
       var filteredMarkers = ko.utils.arrayFilter(marker, function(mark) {
         hideMarker(mark);
         if (mark.title.toLowerCase().indexOf(search) >= 0) {
           console.log(mark.title);
           mark.setVisible(null);
           showMarker(mark);
-          // model.markers(true);
-          // model.markers.push(mark.title);
           return mark.title.toLowerCase().indexOf(search) >= 0;
         }
-        // model.markers.removeAll();
-        // model.markers.push(marker);
+
       });
       return filteredMarkers;
     }
   })
-    // console.log(locations,marker);
+}
+catch (error) {
+  alert('Could not filter markers. Try again.')
+}
 };
 
 var finalCopy = new viewModel(model.addresses, model.markers());

@@ -8,11 +8,13 @@
   </head>
 
   <body>
-    <input id="dynamic-search-bar" placeholder="Enter search here!" data-bind="textInput: query, valueUpdate: 'keyup'" ></input>
     <br><br>
-    <ul class="markerList" data-bind="foreach: theLocations">
+    <div class="theList">
+      <input id="dynamic-search-bar" placeholder="Enter search here!" data-bind="textInput: query, valueUpdate: 'keyup'" ></input>
+      <ul class="markerList" data-bind="foreach: theLocations">
       <li data-bind="text: title, click: addLinks">
     </ul>
+  </div>
     <div id="map"></div>
   </body>
   <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.4.2.js"></script>
